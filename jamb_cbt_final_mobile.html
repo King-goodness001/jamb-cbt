@@ -1,0 +1,503 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>JAMB-Style CBT — Hard — 50 Questions — 45 min</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f7fafc; --card:#ffffff; --muted:#64748b;
+    --accent:#0ea5e9; --accent2:#06b6d4; --success:#10b981; --danger:#ef4444;
+  }
+  *{box-sizing:border-box}
+  body{ margin:0; font-family:Inter,system-ui,Segoe UI,Roboto,Arial; background:linear-gradient(180deg,#f8fafc,#eef2f7); color:#0b1220; padding:20px; }
+  .wrap{ max-width:1000px; margin:0 auto; display:grid; grid-template-columns:1fr 340px; gap:18px; align-items:start; }
+  header{ grid-column:1/-1; display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:8px; }
+  .logo{ width:48px;height:48px;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--accent2)); color:white; display:flex;align-items:center;justify-content:center;font-weight:800; }
+  h1{ margin:0; font-size:18px }
+  .subtitle{ margin:0; color:var(--muted); font-size:13px }
+  .card{ background:var(--card); border-radius:12px; padding:14px; box-shadow:0 8px 24px rgba(2,6,23,0.06); border:1px solid rgba(2,6,23,0.04); }
+  .question-area{ min-height:420px; display:flex; flex-direction:column; justify-content:space-between; }
+  .meta{ display:flex; justify-content:space-between; align-items:center; }
+  .q-num{ color:var(--muted); font-size:13px }
+  .q-subject{ display:inline-block; padding:6px 10px; border-radius:999px; background:#eef7ff; color:#074b8a; font-weight:700; font-size:13px }
+  .q-text{ margin-top:12px; font-size:17px; line-height:1.45; white-space:pre-wrap; color:#0b1220 }
+  .options{ margin-top:14px; display:grid; gap:10px }
+  .option{ display:flex; align-items:center; gap:12px; padding:10px; border-radius:10px; border:1px solid rgba(2,6,23,0.06); background:#fff; cursor:pointer }
+  .option:hover{ transform:translateY(-2px); box-shadow:0 6px 18px rgba(2,6,23,0.04) }
+  .letter{ min-width:40px;height:40px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:800;background:linear-gradient(180deg,#f1f5f9,#fff); border:1px solid rgba(2,6,23,0.04) }
+  .option.selected{ border-color:rgba(14,165,233,0.6); box-shadow:0 6px 18px rgba(14,165,233,0.06); background:linear-gradient(90deg, rgba(14,165,233,0.04), rgba(6,182,212,0.02)) }
+  .option.correct{ background:linear-gradient(90deg, rgba(16,185,129,0.06), rgba(6,182,212,0.02)); border:1px solid rgba(16,185,129,0.12) }
+  .option.wrong{ background:linear-gradient(90deg, rgba(239,68,68,0.06), rgba(239,68,68,0.02)); border:1px solid rgba(239,68,68,0.12) }
+  .controls{ display:flex; justify-content:space-between; align-items:center; margin-top:14px; gap:10px }
+  .btn{ padding:10px 12px; border-radius:10px; border:1px solid rgba(2,6,23,0.06); background:transparent; cursor:pointer; font-weight:700 }
+  .btn.primary{ background:linear-gradient(90deg,var(--accent),var(--accent2)); color:#fff; border:none }
+  .side{ display:flex; flex-direction:column; gap:12px; position:sticky; top:20px }
+  .progress{ height:12px; background:#f1f5f9; border-radius:999px; overflow:hidden; border:1px solid rgba(2,6,23,0.03) }
+  .progress > i{ display:block; height:100%; background:linear-gradient(90deg,var(--accent2),var(--accent)); width:0% }
+  .bullets{ display:flex; flex-wrap:wrap; gap:8px; margin-top:10px }
+  .bullet{ width:38px; height:38px; border-radius:8px; display:flex; align-items:center; justify-content:center; background:#fff; border:1px solid rgba(2,6,23,0.04); font-weight:700; color:var(--muted); cursor:pointer }
+  .bullet.answered{ background:#ecfdf5; color:#065f46; border:1px solid rgba(16,185,129,0.12) }
+  .bullet.current{ outline:2px solid rgba(14,165,233,0.12) }
+  .subject-breakdown div{ display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px dashed rgba(2,6,23,0.03); color:var(--muted); }
+  .result-panel{ padding:10px; border-radius:10px; background:linear-gradient(180deg,#fff,#f8fafc); border:1px solid rgba(2,6,23,0.04) }
+  .explain{ margin-top:8px; font-size:13px; color:var(--muted); background:#fff; padding:8px; border-radius:8px; border:1px solid rgba(2,6,23,0.03) }
+  @media (max-width:900px){ .wrap{ grid-template-columns:1fr; } .side{ position:static } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div style="display:flex;gap:12px;align-items:center">
+      <div class="logo">J</div>
+      <div>
+        <h1>JAMB-Style CBT — Hard Practice</h1>
+        <div class="subtitle">50 tough questions · 45 minutes · fixed order</div>
+      </div>
+    </div>
+    <div style="display:flex;gap:12px;align-items:center">
+      <div style="padding:8px 12px;border-radius:12px;background:var(--card);border:1px solid rgba(2,6,23,0.04)">Questions: <strong>50</strong></div>
+      <div style="padding:8px 12px;border-radius:12px;background:var(--card);border:1px solid rgba(2,6,23,0.04)">
+        <div style="font-size:12px;color:var(--muted)">Time left</div>
+        <div id="timer" style="font-weight:800">45:00</div>
+      </div>
+    </div>
+  </header>
+
+  <main class="card question-area">
+    <div>
+      <div class="meta">
+        <div>
+          <div class="q-num" id="qNum">Question 1</div>
+          <div id="qSubject" class="q-subject">Mathematics</div>
+        </div>
+        <div>
+          <button id="markBtn" class="btn">Mark for review</button>
+        </div>
+      </div>
+
+      <div style="margin-top:12px">
+        <div id="qText" class="q-text">Loading...</div>
+        <div id="options" class="options"></div>
+      </div>
+    </div>
+
+    <div class="controls">
+      <div style="display:flex;gap:8px">
+        <button id="prevBtn" class="btn">Previous</button>
+        <button id="nextBtn" class="btn">Next</button>
+        <button id="clearBtn" class="btn">Clear</button>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button id="saveBtn" class="btn">Save</button>
+        <button id="submitBtn" class="btn primary">Submit Exam</button>
+      </div>
+    </div>
+  </main>
+
+  <aside class="side">
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div>
+          <div style="font-size:13px;color:var(--muted)">Progress</div>
+          <div style="font-weight:700">Complete the exam</div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:13px;color:var(--muted)">Answered</div>
+          <div id="miniScore" style="font-weight:800">0 / 50</div>
+        </div>
+      </div>
+
+      <div style="margin-top:10px" class="progress"><i id="progressBar"></i></div>
+      <div id="bullets" class="bullets"></div>
+
+      <div style="margin-top:12px">
+        <div style="font-weight:700;margin-bottom:8px">Subject breakdown</div>
+        <div id="breakdown"></div>
+      </div>
+    </div>
+
+    <div id="resultPanel" class="card result-panel" style="display:none">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div>
+          <div style="font-size:13px;color:var(--muted)">Final Score</div>
+          <div id="finalScore" style="font-weight:800">0 / 50</div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:13px;color:var(--muted)">Percent</div>
+          <div id="finalPercent" style="font-weight:800">0%</div>
+        </div>
+      </div>
+      <div id="finalMsg" class="explain">Detailed breakdown after submission.</div>
+
+      <div style="margin-top:10px;display:flex;gap:8px">
+        <button id="exportJson" class="btn">Export JSON</button>
+        <button id="exportCsv" class="btn">Export CSV</button>
+        <button id="copyShare" class="btn">Copy Summary</button>
+      </div>
+    </div>
+  </aside>
+</div>
+
+<script>
+/* Clean, mobile-friendly fixed set CBT app.
+   No syntax errors; safe for mobile editors like TrebEdit.
+*/
+
+(function(){
+  const TOTAL_SECONDS = 45 * 60;
+  let secondsLeft = TOTAL_SECONDS;
+  const STORAGE_KEY = "jamb_cbt_mobile_v1";
+
+  const questions = [
+    /* MATHEMATICS (10) */
+    { q:"Mathematics 1: Let f(x)=2x^3 - 9x^2 + 12x - 4. Compute f'(1).", options:["-1","0","1","2"], answer:1, subject:"Mathematics", explanation:"f'(x)=6x^2-18x+12; f'(1)=6-18+12=0." },
+    { q:"Mathematics 2: Solve ln(2x^2)=ln 3 for x>0.", options:["1/3","1/√6","1","√(3/2)"], answer:3, subject:"Mathematics", explanation:"2x^2=3 → x=√(3/2)." },
+    { q:"Mathematics 3: Evaluate ∫_0^1 3x^2 dx.", options:["1","3/2","1/3","1/4"], answer:0, subject:"Mathematics", explanation:"∫3x^2 dx = x^3; from 0 to 1 gives 1." },
+    { q:"Mathematics 4: AM of a and b is 10, GM is 9. Find (a-b)^2.", options:["76","19","2","1"], answer:0, subject:"Mathematics", explanation:"(a-b)^2=(a+b)^2-4ab=400-324=76." },
+    { q:"Mathematics 5: Sum to infinity of geometric series with a=4 equals 8. Find r.", options:["1/2","-1/2","1/4","-1/4"], answer:0, subject:"Mathematics", explanation:"4/(1-r)=8 → r=1/2." },
+    { q:"Mathematics 6: Determinant of [[2,1],[1,2]] equals?", options:["3","-3","4","1"], answer:0, subject:"Mathematics", explanation:"2*2 - 1*1 = 3." },
+    { q:"Mathematics 7: Triangle with sides 13,14,15 has area equal to?", options:["84","84√3","91","105"], answer:0, subject:"Mathematics", explanation:"Semiperimeter 21; area = 84." },
+    { q:"Mathematics 8: Basel sum ∑1/n^2 equals?", options:["π^2/6","π^2/4","1","ln2"], answer:0, subject:"Mathematics", explanation:"Known result: π^2/6." },
+    { q:"Mathematics 9: Solve 2^x = 8.", options:["3","8","1/3","2"], answer:0, subject:"Mathematics", explanation:"2^3 = 8." },
+    { q:"Mathematics 10: If z^2 = -1, principal square root is?", options:["i","-i","1","-1"], answer:0, subject:"Mathematics", explanation:"Principal root is i." },
+
+    /* ENGLISH (10) */
+    { q:"English 1: 'Neither of the options ___ acceptable.' Choose verb.", options:["is","are","were","be"], answer:0, subject:"English", explanation:"'Neither' is singular; use 'is'." },
+    { q:"English 2: Closest meaning of 'obdurate'.", options:["stubborn","compassionate","forgetful","generous"], answer:0, subject:"English", explanation:"Obdurate = stubborn." },
+    { q:"English 3: 'Hardly had she left ___ it began to rain.' Fill in.", options:["when","that","so","than"], answer:0, subject:"English", explanation:"'Hardly... when' signals immediate succession." },
+    { q:"English 4: Correct phrase: 'accused ___ stealing the money.'", options:["for","of","with","about"], answer:1, subject:"English", explanation:"Use 'accused of'." },
+    { q:"English 5: Subjunctive: choose correct.", options:["If I was king...","If I were king...","If I will be king...","If I had be king..."], answer:1, subject:"English", explanation:"Unreal condition uses 'were'." },
+    { q:"English 6: Example of zeugma?", options:["He stole my heart and my wallet.","She ran fast and free.","The sky was blue.","He likes apples."], answer:0, subject:"English", explanation:"One verb affecting two objects in different senses." },
+    { q:"English 7: Punctuation: choose correct 'please eat' meaning.", options:["Lets eat grandma","Let's eat grandma","Lets eat, grandma","Let's eat, grandma"], answer:3, subject:"English", explanation:"Comma: \"Let's eat, grandma\"." },
+    { q:"English 8: 'Not only he but also they ___ present.' Choose verb.", options:["is","are","was","were"], answer:1, subject:"English", explanation:"Compound subject → plural verb 'are'." },
+    { q:"English 9: Antonym pair.", options:["ancient — old","scarce — plentiful","angry — mad","tiny — minute"], answer:1, subject:"English", explanation:"Scarce and plentiful are opposites." },
+    { q:"English 10: Logical fallacy 'If A then Z will happen' without proof.", options:["post hoc","ad hominem","slippery slope","straw man"], answer:2, subject:"English", explanation:"Slippery slope assumes a chain without evidence." },
+
+    /* PHYSICS (10) */
+    { q:"Physics 1: Block on incline angle θ, acceleration = ?", options:["g·sinθ","g·cosθ","g·tanθ","g"], answer:0, subject:"Physics", explanation:"Component along slope is g·sinθ." },
+    { q:"Physics 2: Max speed in SHM of amplitude A and ω is ?", options:["A·ω","A·ω^2","A/ω","ω/A"], answer:0, subject:"Physics", explanation:"v_max = A·ω." },
+    { q:"Physics 3: Period of mass-spring T = ?", options:["2π√(m/k)","2π√(k/m)","π√(m/k)","2πm/k"], answer:0, subject:"Physics", explanation:"T = 2π√(m/k)." },
+    { q:"Physics 4: Ohm's law V = ?", options:["I·R","I/R","R/I","I+R"], answer:0, subject:"Physics", explanation:"V = I·R." },
+    { q:"Physics 5: Photoelectric: raising frequency (above threshold) increases ?", options:["KE of electrons","number of electrons","current","work function"], answer:0, subject:"Physics", explanation:"Photon energy increases KE of ejected electrons." },
+    { q:"Physics 6: After long time DC through series capacitor current is ?", options:["0","V/R","infinite","depends"], answer:0, subject:"Physics", explanation:"Capacitor blocks steady DC; current → 0." },
+    { q:"Physics 7: Work by centripetal force over circular path is ?", options:["positive","negative","zero","depends"], answer:2, subject:"Physics", explanation:"Force is perpendicular to displacement → work = 0." },
+    { q:"Physics 8: SI unit of energy is ?", options:["Newton","Joule","Watt","Pascal"], answer:1, subject:"Physics", explanation:"Energy unit is joule (J)." },
+    { q:"Physics 9: Which is a vector?", options:["speed","momentum","temperature","work"], answer:1, subject:"Physics", explanation:"Momentum has direction." },
+    { q:"Physics 10: Nodes of a standing wave have amplitude ?", options:["maximum","zero","undefined","high"], answer:1, subject:"Physics", explanation:"Nodes have zero amplitude." },
+
+    /* BIOLOGY (10) */
+    { q:"Biology 1: In Aa × Aa, proportion recessive in F2 is ?", options:["1/4","1/2","3/4","1/16"], answer:0, subject:"Biology", explanation:"Genotype 1:2:1 → recessive = 1/4." },
+    { q:"Biology 2: Organelle producing ATP is ?", options:["Ribosome","Chloroplast","Mitochondrion","Golgi"], answer:2, subject:"Biology", explanation:"Mitochondria produce ATP." },
+    { q:"Biology 3: Which carries oxygen in blood ?", options:["Plasma","White cells","Red blood cells","Platelets"], answer:2, subject:"Biology", explanation:"RBCs carry oxygen using hemoglobin." },
+    { q:"Biology 4: PCR amplifies ?", options:["Proteins","Lipids","DNA","Carbohydrates"], answer:2, subject:"Biology", explanation:"PCR amplifies DNA." },
+    { q:"Biology 5: Which cell type produces antibodies ?", options:["T cell","B cell (plasma)","Macrophage","NK cell"], answer:1, subject:"Biology", explanation:"B cells differentiate into plasma cells that secrete antibodies." },
+    { q:"Biology 6: Osmosis moves water from ?", options:["low solute to high solute","high solute to low solute","high pressure to low pressure","low pressure to high pressure"], answer:0, subject:"Biology", explanation:"Water moves from low solute (high water) to high solute." },
+    { q:"Biology 7: Which increases genetic variation directly?", options:["Independent assortment","Mitosis","Binary fission","Clonal propagation"], answer:0, subject:"Biology", explanation:"Independent assortment during meiosis increases variation." },
+    { q:"Biology 8: Lysogenic cycle is characterized by ?", options:["immediate lysis","integration of viral genome","only RNA viruses","no replication"], answer:1, subject:"Biology", explanation:"Viral genome integrates into host DNA." },
+    { q:"Biology 9: Hormone that raises blood glucose is ?", options:["Insulin","Glucagon","Oxytocin","Prolactin"], answer:1, subject:"Biology", explanation:"Glucagon raises blood glucose." },
+    { q:"Biology 10: Site of translation is ?", options:["Nucleus","Ribosome","Smooth ER","Mitochondrion"], answer:1, subject:"Biology", explanation:"Ribosomes translate mRNA to protein." },
+
+    /* CHEMISTRY (10) */
+    { q:"Chemistry 1: pH of 1.0×10^-3 M HCl is ?", options:["1","2","3","4"], answer:2, subject:"Chemistry", explanation:"[H+]=1e-3 → pH = 3." },
+    { q:"Chemistry 2: For N2 + 3H2 → 2NH3, moles H2 needed for 5 mol N2 ?", options:["5","10","15","2.5"], answer:2, subject:"Chemistry", explanation:"Stoichiometry 1:3 → 5×3 = 15." },
+    { q:"Chemistry 3: Strongest acid among HI, HBr, HCl, HF ?", options:["HF","HCl","HBr","HI"], answer:3, subject:"Chemistry", explanation:"Acid strength increases down group → HI strongest." },
+    { q:"Chemistry 4: Empirical formula for 40%C,6.7%H,53.3%O ?", options:["CH2O","C2H4O2","C3H6O3","C2H2O2"], answer:0, subject:"Chemistry", explanation:"Ratios ≈ 1:2:1 → CH2O." },
+    { q:"Chemistry 5: Reagent that oxidizes primary alcohol to aldehyde (mild) ?", options:["PCC","LiAlH4","NaBH4","H2/Pt"], answer:0, subject:"Chemistry", explanation:"PCC oxidizes to aldehyde without going to acid." },
+    { q:"Chemistry 6: Increasing pressure shifts equilibrium to side with ?", options:["more gas moles","fewer gas moles","no change","higher temperature"], answer:1, subject:"Chemistry", explanation:"System shifts to fewer gas moles." },
+    { q:"Chemistry 7: Amphoteric example ?", options:["Sodium chloride","Water","Methane","Helium"], answer:1, subject:"Chemistry", explanation:"Water acts as acid or base." },
+    { q:"Chemistry 8: If temperature doubles at constant P, volume ?", options:["halves","doubles","same","quadruples"], answer:1, subject:"Chemistry", explanation:"V ∝ T at constant P." },
+    { q:"Chemistry 9: Which is a noble gas?", options:["Oxygen","Nitrogen","Argon","Chlorine"], answer:2, subject:"Chemistry", explanation:"Argon is noble gas." },
+    { q:"Chemistry 10: Oxidation state of Cr in K2Cr2O7 ?", options:["+6","+3","+4","0"], answer:0, subject:"Chemistry", explanation:"Cr is +6 in dichromate." }
+  ];
+
+  const total = questions.length; // 50
+  let currentIndex = 0;
+  let answers = new Array(total).fill(null);
+  let marked = new Array(total).fill(false);
+  let submitted = false;
+  let timerInterval = null;
+
+  // DOM refs
+  const qNumEl = document.getElementById('qNum');
+  const qSubjectEl = document.getElementById('qSubject');
+  const qTextEl = document.getElementById('qText');
+  const optionsEl = document.getElementById('options');
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  const clearBtn = document.getElementById('clearBtn');
+  const markBtn = document.getElementById('markBtn');
+  const saveBtn = document.getElementById('saveBtn');
+  const submitBtn = document.getElementById('submitBtn');
+  const progressBar = document.getElementById('progressBar');
+  const bulletsEl = document.getElementById('bullets');
+  const miniScore = document.getElementById('miniScore');
+  const breakdownEl = document.getElementById('breakdown');
+  const timerEl = document.getElementById('timer');
+  const resultPanel = document.getElementById('resultPanel');
+  const finalScoreEl = document.getElementById('finalScore');
+  const finalPercentEl = document.getElementById('finalPercent');
+  const finalMsgEl = document.getElementById('finalMsg');
+  const exportJsonBtn = document.getElementById('exportJson');
+  const exportCsvBtn = document.getElementById('exportCsv');
+  const copyShareBtn = document.getElementById('copyShare');
+
+  // init UI
+  function initBullets(){
+    bulletsEl.innerHTML = '';
+    for(let i=0;i<total;i++){
+      const b = document.createElement('div');
+      b.className = 'bullet';
+      b.innerText = (i+1);
+      b.title = 'Go to question ' + (i+1);
+      (function(iLocal){
+        b.addEventListener('click', function(){ saveAnswer(); goTo(iLocal); });
+      })(i);
+      bulletsEl.appendChild(b);
+    }
+  }
+  function initBreakdown(){
+    const subjects = Array.from(new Set(questions.map(q=>q.subject)));
+    breakdownEl.innerHTML = '';
+    subjects.forEach(function(s){
+      const count = questions.filter(function(q){ return q.subject === s; }).length;
+      const row = document.createElement('div');
+      row.innerHTML = '<div style="font-weight:600">' + s + '</div><div id="bd-' + s + '" style="color:var(--muted)">0 / ' + count + '</div>';
+      breakdownEl.appendChild(row);
+    });
+  }
+
+  function renderQuestion(idx){
+    const q = questions[idx];
+    qNumEl.innerText = 'Question ' + (idx+1);
+    qSubjectEl.innerText = q.subject;
+    qTextEl.innerText = q.q;
+    optionsEl.innerHTML = '';
+    q.options.forEach(function(opt, i){
+      const lab = document.createElement('label');
+      lab.className = 'option';
+      if(answers[idx] === i) lab.classList.add('selected');
+      lab.innerHTML = '<div class="letter">' + String.fromCharCode(65 + i) + '</div><div style="flex:1">' + opt + '</div><input type="radio" name="opt" value="' + i + '"' + (answers[idx]===i ? ' checked' : '') + ' />';
+      lab.addEventListener('click', function(){
+        if(submitted) return;
+        answers[idx] = i;
+        Array.from(optionsEl.querySelectorAll('.option')).forEach(function(o){ o.classList.remove('selected'); });
+        lab.classList.add('selected');
+        updateUI();
+        saveToLocal();
+      });
+      optionsEl.appendChild(lab);
+    });
+    markBtn.innerText = marked[idx] ? 'Unmark' : 'Mark for review';
+    prevBtn.disabled = (idx === 0);
+    nextBtn.disabled = (idx === total - 1);
+    updateBullets();
+    updateUI();
+  }
+
+  function saveAnswer(){
+    const sel = optionsEl.querySelector('input[name="opt"]:checked');
+    if(sel) answers[currentIndex] = Number(sel.value);
+    saveToLocal();
+    updateUI();
+  }
+  function goTo(i){
+    currentIndex = i;
+    renderQuestion(currentIndex);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+  function next(){ saveAnswer(); if(currentIndex < total - 1){ currentIndex++; renderQuestion(currentIndex); } }
+  function prev(){ saveAnswer(); if(currentIndex > 0){ currentIndex--; renderQuestion(currentIndex); } }
+  function clearAnswer(){ if(submitted) return; answers[currentIndex] = null; const ins = optionsEl.querySelectorAll('input[name="opt"]'); ins.forEach(function(inp){ inp.checked = false; }); Array.from(optionsEl.querySelectorAll('.option')).forEach(function(o){ o.classList.remove('selected'); }); updateUI(); saveToLocal(); }
+  markBtn.addEventListener('click', function(){ marked[currentIndex] = !marked[currentIndex]; markBtn.innerText = marked[currentIndex] ? 'Unmark' : 'Mark for review'; saveToLocal(); renderQuestion(currentIndex); });
+  prevBtn.addEventListener('click', prev);
+  nextBtn.addEventListener('click', next);
+  clearBtn.addEventListener('click', clearAnswer);
+  saveBtn.addEventListener('click', function(){ saveToLocal(); alert('Progress saved locally.'); });
+
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'ArrowRight') next();
+    if(e.key === 'ArrowLeft') prev();
+    if((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's'){ e.preventDefault(); saveToLocal(); alert('Saved'); }
+  });
+
+  function updateUI(){
+    const answered = answers.filter(function(a){ return a !== null; }).length;
+    const pct = Math.round((answered / total) * 100);
+    progressBar.style.width = pct + '%';
+    miniScore.innerText = answered + ' / ' + total;
+    const subjects = Array.from(new Set(questions.map(function(q){ return q.subject; })));
+    subjects.forEach(function(s){
+      const totalS = questions.filter(function(q){ return q.subject === s; }).length;
+      const correctS = questions.reduce(function(acc, q, idx){ return (q.subject===s && answers[idx] !== null && answers[idx] === q.answer) ? acc+1 : acc; }, 0);
+      const answeredS = questions.reduce(function(acc, q, idx){ return (q.subject===s && answers[idx] !== null) ? acc+1 : acc; }, 0);
+      const el = document.getElementById('bd-' + s);
+      if(el) el.innerText = correctS + ' / ' + totalS + ' (' + answeredS + ' answered)';
+    });
+    updateBullets();
+  }
+
+  function updateBullets(){
+    const bullets = bulletsEl.querySelectorAll('.bullet');
+    bullets.forEach(function(b, i){
+      if(answers[i] !== null) b.classList.add('answered'); else b.classList.remove('answered');
+      if(i === currentIndex) b.classList.add('current'); else b.classList.remove('current');
+      b.style.boxShadow = marked[i] ? '0 6px 20px rgba(14,165,233,0.06)' : '';
+    });
+  }
+
+  function startTimer(){
+    renderTimer();
+    timerInterval = setInterval(function(){
+      secondsLeft--;
+      if(secondsLeft <= 0){ clearInterval(timerInterval); autoSubmit(); }
+      renderTimer();
+      saveToLocal();
+    }, 1000);
+  }
+  function formatTime(s){ var mm = Math.floor(s/60).toString().padStart(2,'0'); var ss = (s%60).toString().padStart(2,'0'); return mm + ':' + ss; }
+  function renderTimer(){ timerEl.innerText = formatTime(secondsLeft); if(secondsLeft <= 60) timerEl.style.color = 'var(--danger)'; else if(secondsLeft <= 300) timerEl.style.color = '#b45309'; else timerEl.style.color = '#0b1220'; }
+
+  submitBtn.addEventListener('click', function(){
+    var answered = answers.filter(function(a){ return a !== null; }).length;
+    if(!confirm('Submit exam now? You answered ' + answered + ' of ' + total + ' questions.')) return;
+    handleSubmit();
+  });
+
+  function autoSubmit(){
+    alert('Time is up — your exam will be submitted automatically.');
+    handleSubmit();
+  }
+
+  function handleSubmit(){
+    if(submitted) return;
+    submitted = true;
+    clearInterval(timerInterval);
+    saveToLocal(true);
+    var score = 0;
+    var subjTotals = {};
+    var subjCorrect = {};
+    var detailed = [];
+    questions.forEach(function(q, idx){
+      subjTotals[q.subject] = (subjTotals[q.subject] || 0) + 1;
+      var ua = answers[idx];
+      var isCorrect = (ua !== null && ua === q.answer);
+      if(isCorrect){ score++; subjCorrect[q.subject] = (subjCorrect[q.subject] || 0) + 1; }
+      detailed.push({ index: idx+1, subject: q.subject, question: q.q, choices: q.options, correctIndex: q.answer, yourIndex: ua, correct: isCorrect, explanation: q.explanation || '' });
+    });
+    resultPanel.style.display = 'block';
+    finalScoreEl.innerText = score + ' / ' + total;
+    finalPercentEl.innerText = ((score/total)*100).toFixed(1) + '%';
+    finalMsgEl.innerHTML = '<div style="font-weight:700;margin-bottom:8px">' + (score >= Math.round(total*0.5) ? 'Good job — you passed this practice exam.' : 'Review recommended — practice the weak topics.') + '</div>';
+    var brHtml = '';
+    for(var s in subjTotals){ brHtml += '<div style="display:flex;justify-content:space-between;padding:6px 0"><div style="font-weight:600">' + s + '</div><div>' + (subjCorrect[s] || 0) + ' / ' + subjTotals[s] + '</div></div>'; }
+    finalMsgEl.insertAdjacentHTML('beforeend', brHtml);
+    showDetailedResults(detailed);
+    exportJsonBtn.onclick = function(){ exportJSON(score, detailed); };
+    exportCsvBtn.onclick = function(){ exportCSV(score, detailed); };
+    copyShareBtn.onclick = function(){ copyShareText(score, detailed); };
+    prevBtn.disabled = true; nextBtn.disabled = true; submitBtn.disabled = true;
+  }
+
+  function showDetailedResults(results){
+    var main = document.querySelector('.question-area');
+    main.innerHTML = '';
+    var header = document.createElement('div');
+    header.innerHTML = '<div style="display:flex;justify-content:space-between;align-items:center"><div><h2 style="margin:0">Exam Results</h2><div style="color:var(--muted)">Review answers and explanations below.</div></div><div><button class="btn" onclick="location.reload()">Retake / Reload</button></div></div>';
+    main.appendChild(header);
+    var list = document.createElement('div');
+    list.style.marginTop = '12px';
+    results.forEach(function(r){
+      var qWrap = document.createElement('div');
+      qWrap.style.border = '1px solid rgba(2,6,23,0.04)';
+      qWrap.style.padding = '10px';
+      qWrap.style.borderRadius = '10px';
+      qWrap.style.marginBottom = '10px';
+      qWrap.style.background = '#fff';
+      var choiceHtml = '';
+      r.choices.forEach(function(c,i){
+        var bg = '#fff';
+        var mark = '';
+        if(i === r.correctIndex) { bg = 'linear-gradient(90deg, rgba(16,185,129,0.06), rgba(6,182,212,0.02))'; mark = '<div style=\"color:var(--success);font-weight:700\">✓</div>'; }
+        else if(i === r.yourIndex && !r.correct) { bg = 'linear-gradient(90deg, rgba(239,68,68,0.06), rgba(239,68,68,0.02))'; mark = '<div style=\"color:var(--danger);font-weight:700\">✗</div>'; }
+        choiceHtml += '<div style=\"display:flex;gap:10px;align-items:center;padding:6px 8px;border-radius:8px;margin-bottom:6px;background:' + bg + ';border:1px solid rgba(2,6,23,0.03);\"><div style=\"min-width:36px;font-weight:800\">' + String.fromCharCode(65+i) + '</div><div style=\"flex:1\">' + c + '</div>' + mark + '</div>';
+      });
+      qWrap.innerHTML = '<div style=\"display:flex;justify-content:space-between;align-items:center\"><div style=\"font-weight:700\">Q' + r.index + ' • ' + r.subject + '</div><div style=\"font-size:13px;color:' + (r.correct ? 'var(--success)' : 'var(--danger)') + ';font-weight:800\">' + (r.correct ? 'Correct' : 'Wrong') + '</div></div><div style=\"margin-top:8px;color:#0b1220\">' + r.question + '</div><div style=\"margin-top:8px\">' + choiceHtml + '</div><div style=\"margin-top:8px;color:var(--muted)\"><strong>Explanation:</strong> ' + (r.explanation || 'No explanation provided.') + '</div>';
+      list.appendChild(qWrap);
+    });
+    main.appendChild(list);
+  }
+
+  function exportJSON(score, results){
+    var payload = { score: score, total: total, percentage: ((score/total)*100).toFixed(1), results: results, timestamp: (new Date()).toISOString() };
+    var blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a'); a.href = url; a.download = 'cbt_results.json'; a.click(); URL.revokeObjectURL(url);
+  }
+  function exportCSV(score, results){
+    var headers = ['Q','Subject','Question','YourAnswer','CorrectAnswer','Correct','Explanation'];
+    var rows = results.map(function(r){
+      var your = (r.yourIndex === null) ? '' : String.fromCharCode(65 + r.yourIndex);
+      var corr = String.fromCharCode(65 + r.correctIndex);
+      return [r.index, r.subject, '"' + r.question.replace(/"/g,'""') + '"', your, corr, r.correct ? '1' : '0', '"' + (r.explanation || '').replace(/"/g,'""') + '"'].join(',');
+    });
+    var csv = [headers.join(','), rows.join('\\n')].join('\\n');
+    var blob = new Blob([csv], { type: 'text/csv' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a'); a.href = url; a.download = 'cbt_results.csv'; a.click(); URL.revokeObjectURL(url);
+  }
+  function copyShareText(score, results){
+    var lines = [];
+    lines.push('CBT Results — Score: ' + score + '/' + total + ' (' + ((score/total)*100).toFixed(1) + '%)');
+    lines.push('Breakdown:');
+    var subjects = Array.from(new Set(questions.map(function(q){ return q.subject; })));
+    subjects.forEach(function(s){
+      var tot = questions.filter(function(q){ return q.subject === s; }).length;
+      var corr = results.filter(function(r){ return r.subject === s && r.correct; }).length;
+      lines.push(' - ' + s + ': ' + corr + '/' + tot);
+    });
+    lines.push('');
+    lines.push('Incorrect questions:');
+    results.filter(function(r){ return !r.correct; }).forEach(function(r){
+      var your = (r.yourIndex === null) ? 'No answer' : String.fromCharCode(65 + r.yourIndex);
+      var corr = String.fromCharCode(65 + r.correctIndex);
+      lines.push('Q' + r.index + ' (' + r.subject + ') : ' + your + ' -> ' + corr);
+    });
+    var text = lines.join('\\n');
+    navigator.clipboard.writeText(text).then(function(){ alert('Summary copied to clipboard — paste here to share.'); }, function(){ alert('Copy failed — export JSON instead.'); });
+  }
+
+  function saveToLocal(forceSubmitted){
+    try{
+      var state = { answers: answers, marked: marked, currentIndex: currentIndex, secondsLeft: secondsLeft, submitted: !!forceSubmitted || submitted, ts: (new Date()).toISOString() };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    }catch(e){}
+  }
+  function loadFromLocal(){
+    try{
+      var raw = localStorage.getItem(STORAGE_KEY);
+      if(!raw) return;
+      var state = JSON.parse(raw);
+      if(state && state.answers && Array.isArray(state.answers) && state.answers.length === total){
+        answers = state.answers;
+        marked = state.marked || marked;
+        currentIndex = state.currentIndex || 0;
+        secondsLeft = state.secondsLeft || secondsLeft;
+        submitted = !!state.submitted;
+      }
+    }catch(e){}
+  }
+
+  // bootstrap
+  loadFromLocal();
+  initBullets();
+  initBreakdown();
+  renderQuestion(currentIndex);
+  startTimer();
+  if(submitted){ clearInterval(timerInterval); handleSubmit(); }
+})();
+</script>
+</body>
+</html>
